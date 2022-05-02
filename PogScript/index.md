@@ -39,7 +39,7 @@ int var bar = 234*foo
 
 <br/>
 
-NOTE: Information for writing programs can be found in the [docs/guides/progamming/](https://github.com/User0332/PogScript/tree/master/docs/guides/programming) section of the [PogScript](https://github.com/User0332/PogScript/) repository. It can also be found at [User0332.github.io/PogScript/docs](PogScript/docs)
+NOTE: Information for writing programs can be found in the [docs/guides/progamming/](https://github.com/User0332/PogScript/tree/master/docs/guides/programming) section of the [PogScript](https://github.com/User0332/PogScript/) repository. It can also be found at [User0332.github.io/PogScript/docs](docs)
 
 <br/>
 <br/>
