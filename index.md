@@ -8,4 +8,4 @@ Be sure to check out some of my projects!
 
 <br/>
 
-[PogScript](User0332.github.io/PogScript)
+[PogScript](PogScript)
