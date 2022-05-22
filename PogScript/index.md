@@ -52,3 +52,9 @@ where `outfile`, the argument for -o (--out), can be a file ending with .lst (to
 <br/>
 
 NOTE: The PogScript repository can be found [here](https://github.com/User0332/PogScript/)
+
+<br/>
+
+<form method="get" action="../">
+	<button type="submit">Go Back</button>
+</form>

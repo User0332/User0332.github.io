@@ -100,3 +100,9 @@ keyword        datatype    symbol type    symbol name
 <br/>
 
 Also be aware that symbols like C structs cannot be `extern`ed because there is no trace of them in the assembly code. C structure instances would have to be represented as a contiguous block of memory, like an array.
+
+<br/>
+
+<form method="get" action="./index.md">
+	<button type="submit">Go Back</button>
+</form>

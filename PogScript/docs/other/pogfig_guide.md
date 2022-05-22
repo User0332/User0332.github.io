@@ -18,11 +18,11 @@ And should look something like this:
 		"%COMPILER%/imports"
 	],
 	"imports.names": {
-        "projlib" : [
-            "mylib.pog",
-            "myotherlibpog"
-        ]
-    },
+		"projlib" : [
+			"mylib.pog",
+			"myotherlibpog"
+		]
+	},
 
 	"compiler.optimizations": 0
 }
@@ -54,3 +54,9 @@ Special path aliases:
 `%FILE%` - This will be replaced with the path to the file being compiled
 
 `%COMPILER%` - This will be replaced with the path to the compiler
+
+<br/>
+
+<form method="get" action="./index.md">
+	<button type="submit">Go Back</button>
+</form>
