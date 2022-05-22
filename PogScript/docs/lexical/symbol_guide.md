@@ -13,7 +13,7 @@ datatype    symbol type   identifier   assignment   value
 
 <br/>
 
-Below are tables for datatypes and symbol types
+Below are tables for datatypes and symbol types.
 
 <br/>
 
@@ -78,18 +78,23 @@ extern          cdecl            int         func          printf(char ptr, ...)
 keyword   calling convention    datatype     symbol type   symbol name
 ```
 
+<br/>
+
 ```c
 extern stdcall int func Function(int var foo, char ptr bar)
 ```
 
 <br/>
+<br/>
 
-Note that calling convention names like `cdecl` and `stdcall` are soft keywords, so you can still use them as symbols in the code. If the symbol is not a function, it should not be decorated with a calling convention and should instead look like this:
+Note that calling convention names like `cdecl` and `stdcall` are soft keywords, so you can still use them as symbols in the code. If the externally referenced symbol is not a function, it should not be decorated with a calling convention and should instead look like this:
 
 <br/>
 
 ```c
-extern int var x
+extern           int           var           x
+^                 ^             ^            ^
+keyword        datatype    symbol type    symbol name
 ```
 
 <br/>
