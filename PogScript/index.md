@@ -55,6 +55,4 @@ NOTE: The PogScript repository can be found [here](https://github.com/User0332/P
 
 <br/>
 
-<form method="get" action="../">
-	<button type="submit">Go Back</button>
-</form>
+[Go Back](../)

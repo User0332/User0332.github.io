@@ -57,6 +57,4 @@ Special path aliases:
 
 <br/>
 
-<form method="get" action="./index.md">
-	<button type="submit">Go Back</button>
-</form>
+[Go Back](./)

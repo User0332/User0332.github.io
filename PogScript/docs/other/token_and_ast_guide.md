@@ -63,3 +63,5 @@ int var foo = astinsert {"ast_expression"}
 <br/>
 
 NOTE: `astimport` and `astinsert` are resolved statically at compile time, so user input would not be able to modify their behavior. All `astinsert` does is replace the current working node in the parser with the provided node.
+
+[Go Back](./)

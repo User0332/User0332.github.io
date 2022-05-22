@@ -103,6 +103,4 @@ Also be aware that symbols like C structs cannot be `extern`ed because there is 
 
 <br/>
 
-<form method="get" action="./index.md">
-	<button type="submit">Go Back</button>
-</form>
+[Go Back](./)
