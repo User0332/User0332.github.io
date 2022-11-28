@@ -12,6 +12,12 @@ Check out some of my projects:
 
 [pylibc](https://github.com/User0332/pylibc)
 
+[pysite](https://github.com/User0332/pyx)
+
+[webpy](https://github.com/User0332/webpy)
+
+[UntypedScript](https://github.com/User0332/UntypedScript)
+
 <br/>
 
 My Replit account:
