@@ -38,7 +38,7 @@ Currently still a work in progress, [UntypedScript](https://github.com/User0332/
 
 ### WebPy
 
-A web framework using Flask that allows the developer to use filesystem routes and reduce the amount of Python code needed for the application
+A web framework using Flask that allows the developer to use filesystem routes and reduce the amount of Python code needed for the application. WebPy now offers integration with PyX files!
 
   - [Framework](https://github.com/User0332/webpy)
   - [Example Application](https://github.com/User0332/webpy-app)
