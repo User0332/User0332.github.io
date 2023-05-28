@@ -1,0 +1,25 @@
+button {
+	border: none;
+	border-radius: 10px;
+	font-size: 25px;
+	font-weight: bold;
+	color: #54B3A4;
+	background-color: mediumspringgreen;
+}
+
+body {
+	background-color: #AFF0F0;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	text-align: center;
+}
+
+h1 {
+	color: mediumseagreen;
+}
+
+input {
+	border-color: black;
+	border-radius: 10px;
+	padding: 10px 10px;
+	margin: 2px;
+}
