@@ -46,6 +46,60 @@ layout: default
   {% endfor %}
 {% endif %}
 
+<div id="contribution-stats" class="container mb-4">
+	<style> /* just use inline style here for simplicity */
+		html[data-mode="light"] #gh-stats-contrib {
+			content: url("https://raw.githubusercontent.com/User0332/github-stats-visualizer/refs/heads/master/generated/overview.svg#gh-light-mode-only");
+		}
+
+		html:not([data-mode]) #gh-stats-contrib {
+			content: url("https://raw.githubusercontent.com/User0332/github-stats-visualizer/refs/heads/master/generated/overview.svg#gh-dark-mode-only");
+		}
+
+		html[data-mode="light"] #gh-stats-lang {
+			content: url("https://raw.githubusercontent.com/User0332/github-stats-visualizer/refs/heads/master/generated/languages.svg#gh-light-mode-only");
+		}
+
+		html:not([data-mode]) #gh-stats-lang {
+			content: url("https://raw.githubusercontent.com/User0332/github-stats-visualizer/refs/heads/master/generated/languages.svg#gh-dark-mode-only");
+		}
+
+		.gh-stats-img {
+			width: auto;
+			height: auto;
+		}
+	</style>
+
+	<div id="gh-stats-img-container" class="row">
+		<!-- <figure>
+			<img class="gh-stats-img col-md-6" id="gh-stats-contrib" src="" alt="Contribution Overview"/>
+		</figure>
+		<figure>
+			<img class="gh-stats-img col-md-6" id="gh-stats-lang" src="" alt="Contribution by Language"/>
+		</figure> -->
+	</div>
+
+	<script>
+		// use a script to gen the images because Chirpy will make them preview-img otherwise
+		
+		const imgContainer = document.getElementById('gh-stats-img-container');
+
+		const contribImg = document.createElement('img');
+		contribImg.id = 'gh-stats-contrib';
+		contribImg.className = 'gh-stats-img col-md-6';
+		contribImg.alt = 'Contribution Overview';
+
+		const langImg = document.createElement('img');
+		langImg.id = 'gh-stats-lang';
+		langImg.className = 'gh-stats-img col-md-6';
+		langImg.alt = 'Contribution by Language';
+
+		imgContainer.appendChild(contribImg);
+		imgContainer.appendChild(langImg);
+		
+	</script>
+</div>
+
 <div id="post-list" class="flex-grow-1 px-xl-1">
   {% for post in posts %}
     <article class="card-wrapper card">
