@@ -15,17 +15,17 @@ layout: default
 {% assign visible_end = visible_start | plus: paginator.per_page %}
 
 {% if all_pinned.size > visible_start %}
-  {% if all_pinned.size > visible_end %}
-    {% assign pinned_size = paginator.per_page %}
-  {% else %}
-    {% assign pinned_size = all_pinned.size | minus: visible_start %}
-  {% endif %}
-
-  {% for i in (visible_start..all_pinned.size) limit: pinned_size %}
-    {% assign posts = posts | push: all_pinned[i] %}
-  {% endfor %}
+{% if all_pinned.size > visible_end %}
+{% assign pinned_size = paginator.per_page %}
 {% else %}
-  {% assign pinned_size = 0 %}
+{% assign pinned_size = all_pinned.size | minus: visible_start %}
+{% endif %}
+
+{% for i in (visible_start..all_pinned.size) limit: pinned_size %}
+{% assign posts = posts | push: all_pinned[i] %}
+{% endfor %}
+{% else %}
+{% assign pinned_size = 0 %}
 {% endif %}
 
 <!-- Get normal posts on current page -->
@@ -33,21 +33,22 @@ layout: default
 {% assign normal_size = paginator.posts | size | minus: pinned_size %}
 
 {% if normal_size > 0 %}
-  {% if pinned_size > 0 %}
-    {% assign normal_start = 0 %}
-  {% else %}
-    {% assign normal_start = visible_start | minus: all_pinned.size %}
-  {% endif %}
+{% if pinned_size > 0 %}
+{% assign normal_start = 0 %}
+{% else %}
+{% assign normal_start = visible_start | minus: all_pinned.size %}
+{% endif %}
 
-  {% assign normal_end = normal_start | plus: normal_size | minus: 1 %}
+{% assign normal_end = normal_start | plus: normal_size | minus: 1 %}
 
-  {% for i in (normal_start..normal_end) %}
-    {% assign posts = posts | push: all_normal[i] %}
-  {% endfor %}
+{% for i in (normal_start..normal_end) %}
+{% assign posts = posts | push: all_normal[i] %}
+{% endfor %}
 {% endif %}
 
 <div id="contribution-stats" class="container mb-4">
-	<style> /* just use inline style here for simplicity */
+	<style>
+		/* just use inline style here for simplicity */
 		html[data-mode="light"] #gh-stats-contrib {
 			content: url("https://raw.githubusercontent.com/User0332/github-stats-visualizer/refs/heads/master/generated/overview.svg#gh-light-mode-only");
 		}
@@ -75,114 +76,324 @@ layout: default
 
 	<script>
 		/* use a script to gen the images because Chirpy will make them preview-img otherwise */
-		
+
+		function wrapAnchor(elem) {
+			const anchor = document.createElement('a');
+			anchor.className = 'col-md-6';
+			anchor.href = 'https://github.com/User0332';
+
+			anchor.appendChild(elem);
+
+			return anchor;
+		}
+
 		const imgContainer = document.getElementById('gh-stats-img-container');
 
 		const contribImg = document.createElement('img');
 		contribImg.id = 'gh-stats-contrib';
-		contribImg.className = 'gh-stats-img col-md-6';
+		contribImg.className = 'gh-stats-img';
 		contribImg.alt = 'Contribution Overview';
 
 		const langImg = document.createElement('img');
 		langImg.id = 'gh-stats-lang';
-		langImg.className = 'gh-stats-img col-md-6';
+		langImg.className = 'gh-stats-img';
 		langImg.alt = 'Contribution by Language';
 
-		imgContainer.appendChild(contribImg);
-		imgContainer.appendChild(langImg);
-		
+		imgContainer.appendChild(wrapAnchor(contribImg));
+		imgContainer.appendChild(wrapAnchor(langImg));
+
+	</script>
+</div>
+
+<div id="featured-repos-container" class="container mb-4">
+	<style>
+		#featured-repos {
+			--gh-repo-bg: #0d1117;
+			--gh-repo-text: #c9d1d9;
+			--gh-repo-muted: #8b949e;
+			--gh-repo-border: rgba(240, 246, 252, 0.06);
+		}
+
+		html[data-mode="light"] #featured-repos {
+			--gh-repo-bg: #ffffff;
+			--gh-repo-text: #24292f;
+			--gh-repo-muted: #6e7781;
+			--gh-repo-border: rgba(27, 31, 35, 0.08);
+		}
+
+		#featured-repos .gh-repo-card {
+			background: var(--gh-repo-bg);
+			color: var(--gh-repo-text);
+			border: 1px solid var(--gh-repo-border);
+		}
+
+		#featured-repos .color-dot {
+			width: 10px;
+			height: 10px;
+			border-radius: 2px;
+			display: inline-block;
+		}
+	</style>
+
+	<h2>I've worked on...</h2>
+	<div id="featured-repos"></div>
+	<h2 class="text-end mt-3">and more!</h2>
+
+	<script>
+		const fontInclude = document.createElement('link');
+		fontInclude.id = 'gh-inter-font';
+		fontInclude.rel = 'stylesheet';
+		fontInclude.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap';
+		document.head.appendChild(fontInclude);
+
+		function makeStat(iconClass, text) {
+			const wrap = document.createElement('div');
+			wrap.className = 'd-flex align-items-center';
+			const icon = document.createElement('i');
+			icon.className = 'fa-fw ' + iconClass;
+			wrap.appendChild(icon);
+			const span = document.createElement('span');
+			span.className = 'ms-1';
+			span.textContent = text;
+			wrap.appendChild(span);
+			return wrap;
+		}
+
+		function createRepoCard(repo) {
+			const col = document.createElement('div'); col.className = 'col-md-6';
+
+			const wrappingAnchor = document.createElement('a');
+			wrappingAnchor.href = 'https://github.com/' + repo.name;
+			wrappingAnchor.target = '_blank';
+			wrappingAnchor.rel = 'noopener';
+
+			const card = document.createElement('div'); card.className = 'card gh-repo-card mb-3 h-100';
+
+			const body = document.createElement('div'); body.className = 'card-body d-flex flex-column';
+
+			const title = document.createElement('div'); title.className = 'card-title h6 d-flex align-items-center mb-1';
+			title.textContent = repo.name;
+			title.style.color = 'var(--link-color)';
+
+			const stars = document.createElement('span'); stars.className = 'badge bg-secondary ms-auto'; stars.textContent = (repo.stargazers || '0') + ' ★';
+			title.appendChild(stars);
+			body.appendChild(title);
+
+			const desc = document.createElement('p'); desc.className = 'card-text text-muted mb-2 flex-grow-0'; desc.textContent = repo.description || '';
+			body.appendChild(desc);
+
+			const statsDiv = document.createElement('div');
+			statsDiv.className = 'd-flex align-items-center gap-2 mb-2 text-muted';
+
+
+			const label = document.createElement('span'); label.textContent = 'Contributions:';
+			statsDiv.appendChild(label);
+
+			if (repo.commits && repo.commits > 0) {
+				statsDiv.appendChild(makeStat('fa-solid fa-code-commit', repo.commits));
+			}
+
+			if (repo.prs && repo.prs > 0) {
+				const prIcon = 'fa-solid fa-code-merge';
+				statsDiv.appendChild(makeStat(prIcon, repo.prs));
+			}
+
+			// closed issues stat
+			if (repo.issues && repo.issues > 0) {
+				statsDiv.appendChild(makeStat('fa-regular fa-circle-check', repo.issues));
+			}
+
+			if (statsDiv.children.length > 0) {
+				body.appendChild(statsDiv);
+			}
+
+			const langWrap = document.createElement('div'); langWrap.className = 'mt-auto';
+
+			(repo.languages || []).forEach(function (l) {
+				const row = document.createElement('div'); row.className = 'd-flex justify-content-between align-items-center mb-1';
+				const left = document.createElement('div'); left.className = 'd-flex align-items-center gap-2';
+				const dot = document.createElement('span'); dot.className = 'color-dot'; dot.style.background = l.color || '#ccc';
+				left.appendChild(dot);
+				const name = document.createElement('span'); name.textContent = l.name;
+				left.appendChild(name);
+				const percent = document.createElement('small'); percent.className = 'text-muted'; percent.textContent = l.percent;
+				row.appendChild(left); row.appendChild(percent);
+				langWrap.appendChild(row);
+			});
+
+			body.appendChild(langWrap);
+			card.appendChild(body);
+			wrappingAnchor.appendChild(card);
+			col.appendChild(wrappingAnchor);
+
+			return col;
+		}
+
+		const repos = [
+			{
+				name: 'dotnet/BenchmarkDotNet',
+				stargazers: '11.3k',
+				description: 'Powerful .NET library for benchmarking.',
+				commits: 0,
+				prs: 5,
+				issues: 4,
+				languages: [
+					{ name: 'C#', percent: '97.6%', color: '#178600' },
+					{ name: 'Shell', percent: '1.8%', color: '#89e051' },
+					{ name: 'Other', percent: '0.6%', color: '#ededed' }
+				]
+			},
+			{
+				name: "User0332/regissuite",
+				stargazers: '1',
+				description: 'Tools for the Regis community.',
+				commits: 279,
+				prs: 0,
+				issues: 67,
+				languages: [
+					{ name: "HTML", percent: "36.6%", color: "#e34c26" },
+					{ name: "JavaScript", percent: "32.7%", color: "#f1e05a" },
+					{ name: "Python", percent: "28.1%", color: "#3572A5" },
+					{ name: "Other", percent: "2.6%", color: "#ededed" },
+				]
+			},
+			{
+				name: 'uncommon-language-framework/runtime',
+				stargazers: '5',
+				description: 'The source code for the ULR (Uncommon Language Runtime) and the ULR Loader, which allows all ULF applications to run.',
+				commits: 90,
+				prs: 0,
+				issues: 0,
+				languages: [
+					{ name: 'C++', percent: '94.4%', color: '#f34b7d' },
+					{ name: 'PowerShell', percent: '0.4%', color: '#3572A5' },
+					{ name: 'C#', percent: '1.6%', color: '#178600' }
+				]
+			},
+			{
+				name: 'User0332/UntypedScript',
+				stargazers: '3',
+				description: 'A fast and easy-to-use compiled language with a base implementation written in Python.',
+				commits: 64,
+				prs: 0,
+				issues: 0,
+				languages: [
+					{ name: 'Python', percent: '89.2%', color: '#3572A5' },
+					{ name: 'x86 Assembly', percent: '10.2%', color: '#6E4C13' },
+					{ name: 'Other', percent: '0.6%', color: '#ededed' }
+				]
+			}
+		];
+
+		// todo: add skill cards
+
+		const featuredRepos = document.getElementById('featured-repos');
+
+		for (let i = 0; i < repos.length; i += 2) {
+			const row = document.createElement('div');
+			row.className = 'row my-2';
+
+			row.appendChild(createRepoCard(repos[i]));
+
+			if (i + 1 < repos.length) {
+				row.appendChild(createRepoCard(repos[i + 1]));
+			}
+
+			featuredRepos.appendChild(row);
+		}
+
 	</script>
 </div>
 
 <div id="post-list" class="flex-grow-1 px-xl-1">
-  {% for post in posts %}
-    <article class="card-wrapper card">
-      <a href="{{ post.url | relative_url }}" class="post-preview row g-0 flex-md-row-reverse">
-        {% assign card_body_col = '12' %}
+	{% for post in posts %}
+	<article class="card-wrapper card">
+		<a href="{{ post.url | relative_url }}" class="post-preview row g-0 flex-md-row-reverse">
+			{% assign card_body_col = '12' %}
 
-        {% if post.image %}
-          {% assign src = post.image.path | default: post.image %}
+			{% if post.image %}
+			{% assign src = post.image.path | default: post.image %}
 
-          {% if post.media_subpath %}
-            {% unless src contains '://' %}
-              {% assign src = post.media_subpath
-                | append: '/'
-                | append: src
-                | replace: '///', '/'
-                | replace: '//', '/'
-              %}
-            {% endunless %}
-          {% endif %}
+			{% if post.media_subpath %}
+			{% unless src contains '://' %}
+			{% assign src = post.media_subpath
+			| append: '/'
+			| append: src
+			| replace: '///', '/'
+			| replace: '//', '/'
+			%}
+			{% endunless %}
+			{% endif %}
 
-          {% if post.image.lqip %}
-            {% assign lqip = post.image.lqip %}
+			{% if post.image.lqip %}
+			{% assign lqip = post.image.lqip %}
 
-            {% if post.media_subpath %}
-              {% unless lqip contains 'data:' %}
-                {% assign lqip = post.media_subpath
-                  | append: '/'
-                  | append: lqip
-                  | replace: '///', '/'
-                  | replace: '//', '/'
-                %}
-              {% endunless %}
-            {% endif %}
+			{% if post.media_subpath %}
+			{% unless lqip contains 'data:' %}
+			{% assign lqip = post.media_subpath
+			| append: '/'
+			| append: lqip
+			| replace: '///', '/'
+			| replace: '//', '/'
+			%}
+			{% endunless %}
+			{% endif %}
 
-            {% assign lqip_attr = 'lqip="' | append: lqip | append: '"' %}
-          {% endif %}
+			{% assign lqip_attr = 'lqip="' | append: lqip | append: '"' %}
+			{% endif %}
 
-          {% assign alt = post.image.alt | xml_escape | default: 'Preview Image' %}
+			{% assign alt = post.image.alt | xml_escape | default: 'Preview Image' %}
 
-          <div class="col-md-5">
-            <img src="{{ src }}" alt="{{ alt }}" {{ lqip_attr }}>
-          </div>
+			<div class="col-md-5">
+				<img src="{{ src }}" alt="{{ alt }}" {{ lqip_attr }}>
+			</div>
 
-          {% assign card_body_col = '7' %}
-        {% endif %}
+			{% assign card_body_col = '7' %}
+			{% endif %}
 
-        <div class="col-md-{{ card_body_col }}">
-          <div class="card-body d-flex flex-column">
-            <h1 class="card-title my-2 mt-md-0">{{ post.title }}</h1>
+			<div class="col-md-{{ card_body_col }}">
+				<div class="card-body d-flex flex-column">
+					<h1 class="card-title my-2 mt-md-0">{{ post.title }}</h1>
 
-            <div class="card-text content mt-0 mb-3">
-              <p>{% include post-summary.html %}</p>
-            </div>
+					<div class="card-text content mt-0 mb-3">
+						<p>{% include post-summary.html %}</p>
+					</div>
 
-            <div class="post-meta flex-grow-1 d-flex align-items-end">
-              <div class="me-auto">
-                <!-- posted date -->
-                <i class="far fa-calendar fa-fw me-1"></i>
-                {% include datetime.html date=post.date lang=lang %}
+					<div class="post-meta flex-grow-1 d-flex align-items-end">
+						<div class="me-auto">
+							<!-- posted date -->
+							<i class="far fa-calendar fa-fw me-1"></i>
+							{% include datetime.html date=post.date lang=lang %}
 
-                <!-- categories -->
-                {% if post.categories.size > 0 %}
-                  <i class="far fa-folder-open fa-fw me-1"></i>
-                  <span class="categories">
-                    {% for category in post.categories %}
-                      {{ category }}
-                      {%- unless forloop.last -%},{%- endunless -%}
-                    {% endfor %}
-                  </span>
-                {% endif %}
-              </div>
+							<!-- categories -->
+							{% if post.categories.size > 0 %}
+							<i class="far fa-folder-open fa-fw me-1"></i>
+							<span class="categories">
+								{% for category in post.categories %}
+								{{ category }}
+								{%- unless forloop.last -%},{%- endunless -%}
+								{% endfor %}
+							</span>
+							{% endif %}
+						</div>
 
-              {% if post.pin %}
-                <div class="pin ms-1">
-                  <i class="fas fa-thumbtack fa-fw"></i>
-                  <span>{{ site.data.locales[lang].post.pin_prompt }}</span>
-                </div>
-              {% endif %}
-            </div>
-            <!-- .post-meta -->
-          </div>
-          <!-- .card-body -->
-        </div>
-      </a>
-    </article>
-  {% endfor %}
+						{% if post.pin %}
+						<div class="pin ms-1">
+							<i class="fas fa-thumbtack fa-fw"></i>
+							<span>{{ site.data.locales[lang].post.pin_prompt }}</span>
+						</div>
+						{% endif %}
+					</div>
+					<!-- .post-meta -->
+				</div>
+				<!-- .card-body -->
+			</div>
+		</a>
+	</article>
+	{% endfor %}
 </div>
 <!-- #post-list -->
 
 {% if paginator.total_pages > 1 %}
-  {% include post-paginator.html %}
+{% include post-paginator.html %}
 {% endif %}
