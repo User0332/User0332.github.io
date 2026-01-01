@@ -105,6 +105,30 @@ layout: default
 	</script>
 </div>
 
+<div id="skill-badges-container" class="container mb-4">
+	<style>
+		html[data-mode="light"] #skill-badges img {
+			content: url("https://skillicons.dev/icons?i=python,dotnet,java,cs,flask,html,css,js,powershell,selenium,ubuntu&theme=light");
+		}
+
+		html:not([data-mode]) #skill-badges img {
+			content: url("https://skillicons.dev/icons?i=python,dotnet,java,cs,flask,html,css,js,powershell,selenium,ubuntu&theme=dark");
+		}
+	</style>
+
+	<div id="skill-badges"></div>
+
+	<script>
+		const skillBadgesContainer = document.getElementById('skill-badges');
+
+		const img = document.createElement('img');
+		img.src = 'https://skillicons.dev/icons?i=python,dotnet,java,cs,flask,html,css,js,powershell,selenium,ubuntu';
+		img.alt = 'Skill Icons';
+
+		skillBadgesContainer.appendChild(img);
+	</script>
+</div>
+
 <div id="featured-repos-container" class="container mb-4">
 	<style>
 		#featured-repos {
@@ -288,8 +312,6 @@ layout: default
 				]
 			}
 		];
-
-		/* todo: add skill cards */
 
 		const featuredRepos = document.getElementById('featured-repos');
 
