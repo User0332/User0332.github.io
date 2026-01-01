@@ -107,25 +107,169 @@ layout: default
 
 <div id="skill-badges-container" class="container mb-4">
 	<style>
-		html[data-mode="light"] #skill-badges img {
-			content: url("https://skillicons.dev/icons?i=python,dotnet,java,cs,flask,html,css,js,powershell,selenium,ubuntu&theme=light");
+		html[data-mode="light"] #python-skill-icon img {
+			content: url("https://skillicons.dev/icons?i=python&theme=light");
 		}
 
-		html:not([data-mode]) #skill-badges img {
-			content: url("https://skillicons.dev/icons?i=python,dotnet,java,cs,flask,html,css,js,powershell,selenium,ubuntu&theme=dark");
+		html:not([data-mode]) #python-skill-icon img {
+			content: url("https://skillicons.dev/icons?i=python&theme=dark");
+		}
+
+		html[data-mode="light"] #dotnet-skill-icon img {
+			content: url("https://skillicons.dev/icons?i=dotnet&theme=light");
+		}
+
+		html:not([data-mode]) #dotnet-skill-icon img {
+			content: url("https://skillicons.dev/icons?i=dotnet&theme=dark");
+		}
+
+		html[data-mode="light"] #java-skill-icon img {
+			content: url("https://skillicons.dev/icons?i=java&theme=light");
+		}
+
+		html:not([data-mode]) #java-skill-icon img {
+			content: url("https://skillicons.dev/icons?i=java&theme=dark");
+		}
+
+		html[data-mode="light"] #cs-skill-icon img {
+			content: url("https://skillicons.dev/icons?i=cs&theme=light");
+		}
+
+		html:not([data-mode]) #cs-skill-icon img {
+			content: url("https://skillicons.dev/icons?i=cs&theme=dark");
+		}
+
+		html[data-mode="light"] #flask-skill-icon img {
+			content: url("https://skillicons.dev/icons?i=flask&theme=light");
+		}
+
+		html:not([data-mode]) #flask-skill-icon img {
+			content: url("https://skillicons.dev/icons?i=flask&theme=dark");
+		}
+
+		html[data-mode="light"] #html-skill-icon img {
+			content: url("https://skillicons.dev/icons?i=html&theme=light");
+		}
+
+		html:not([data-mode]) #html-skill-icon img {
+			content: url("https://skillicons.dev/icons?i=html&theme=dark");
+		}
+
+		html[data-mode="light"] #css-skill-icon img {
+			content: url("https://skillicons.dev/icons?i=css&theme=light");
+		}
+
+		html:not([data-mode]) #css-skill-icon img {
+			content: url("https://skillicons.dev/icons?i=css&theme=dark");
+		}
+
+		html[data-mode="light"] #javascript-skill-icon img {
+			content: url("https://skillicons.dev/icons?i=js&theme=light");
+		}
+
+		html:not([data-mode]) #javascript-skill-icon img {
+			content: url("https://skillicons.dev/icons?i=js&theme=dark");
+		}
+
+		html[data-mode="light"] #powershell-skill-icon img {
+			content: url("https://skillicons.dev/icons?i=powershell&theme=light");
+		}
+
+		html:not([data-mode]) #powershell-skill-icon img {
+			content: url("https://skillicons.dev/icons?i=powershell&theme=dark");
+		}
+
+		html[data-mode="light"] #selenium-skill-icon img {
+			content: url("https://skillicons.dev/icons?i=selenium&theme=light");
+		}
+
+		html:not([data-mode]) #selenium-skill-icon img {
+			content: url("https://skillicons.dev/icons?i=selenium&theme=dark");
+		}
+
+		html[data-mode="light"] #ubuntu-skill-icon img {
+			content: url("https://skillicons.dev/icons?i=ubuntu&theme=light");
+		}
+
+		html:not([data-mode]) #ubuntu-skill-icon img {
+			content: url("https://skillicons.dev/icons?i=ubuntu&theme=dark");
 		}
 	</style>
 
-	<div id="skill-badges"></div>
+	<div id="skill-badges" class="d-flex gap-2"></div>
 
 	<script>
+		function createImg({ name, href, iconId }) {
+			const ident = iconId || name.toLowerCase();
+
+			const a = document.createElement('a');
+			a.href = href;
+			a.id = `${ident}-skill-icon`;
+			a.target = '_blank';
+			a.rel = 'noopener';
+
+			const img = document.createElement('img');
+			img.src = `https://skillicons.dev/icons?i=${ident}&theme=dark`;
+			img.alt = `${name} Skill Icon`;
+
+			a.appendChild(img);
+			return a;
+		}
+
 		const skillBadgesContainer = document.getElementById('skill-badges');
 
-		const img = document.createElement('img');
-		img.src = 'https://skillicons.dev/icons?i=python,dotnet,java,cs,flask,html,css,js,powershell,selenium,ubuntu';
-		img.alt = 'Skill Icons';
+		const skillInfos = [
+			{
+				name: 'Python',
+				href: 'https://github.com/User0332?tab=repositories&q=&type=&language=python'
+			},
+			{
+				name: '.NET',
+				href: 'https://github.com/User0332?tab=repositories&q=topic%3Adotnet%2Ccsharp&type=&language=&sort=',
+				iconId: 'dotnet'
+			},
+			{
+				name: 'Java',
+				href: 'https://github.com/orgs/CyberRaptors/repositories?q=language%3AJava'
+			},
+			{
+				name: 'C#',
+				href: 'https://github.com/User0332?tab=repositories&q=&type=&language=csharp',
+				iconId: 'cs'
+			},
+			{
+				name: 'Flask',
+				href: 'https://github.com/User0332?tab=repositories&q=topic%3Aflask&type=&language=&sort='
+			},
+			{
+				name: 'HTML',
+				href: 'https://github.com/User0332?tab=repositories&q=&type=&language=html'
+			},
+			{
+				name: 'CSS',
+				href: 'https://github.com/search?q=owner%3AUser0332+language%3Acss&type=code'
+			},
+			{
+				name: 'JavaScript',
+				href: 'https://github.com/search?q=owner%3AUser0332+language%3Ajs&type=code'
+			},
+			{
+				name: 'PowerShell',
+				href: 'https://github.com/search?q=owner%3AUser0332%20language%3Apowershell&type=code'
+			},
+			{
+				name: 'Selenium',
+				href: 'https://github.com/search?q=owner%3AUser0332+regis&type=repositories'
+			},
+			{
+				name: 'Ubuntu',
+				href: 'https://github.com/search?q=owner%3AUser0332+deb-secure+OR+consoleide&type=repositories'
+			}
+		];
 
-		skillBadgesContainer.appendChild(img);
+		for (const skillInfo of skillInfos) {
+			skillBadgesContainer.appendChild(createImg(skillInfo));
+		}
 	</script>
 </div>
 
@@ -156,6 +300,14 @@ layout: default
 			height: 10px;
 			border-radius: 2px;
 			display: inline-block;
+		}
+
+		.text-success-green {
+			color: #3fb950;
+		}
+
+		.text-closed-purple {
+			color: #ab7df8;
 		}
 	</style>
 
@@ -204,7 +356,14 @@ layout: default
 			title.textContent = repo.name;
 			title.style.color = 'var(--link-color)';
 
-			const stars = document.createElement('span'); stars.className = 'badge bg-secondary ms-auto'; stars.textContent = (repo.stargazers || '0') + ' ★';
+			const stars = document.createElement('span');
+			stars.className = 'badge bg-secondary ms-auto';
+			stars.textContent = (repo.stargazers || '0');
+
+			const starIcon = document.createElement('i');
+			starIcon.className = 'fa-solid fa-star fa-fw ms-1 text-warning';
+			stars.append(starIcon);
+
 			title.appendChild(stars);
 			body.appendChild(title);
 
@@ -219,16 +378,16 @@ layout: default
 			statsDiv.appendChild(label);
 
 			if (repo.commits && repo.commits > 0) {
-				statsDiv.appendChild(makeStat('fa-solid fa-code-commit', repo.commits));
+				statsDiv.appendChild(makeStat('fa-solid fa-code-commit text-success-green', repo.commits));
 			}
 
 			if (repo.prs && repo.prs > 0) {
-				const prIcon = 'fa-solid fa-code-merge';
+				const prIcon = 'fa-solid fa-code-merge text-closed-purple';
 				statsDiv.appendChild(makeStat(prIcon, repo.prs));
 			}
 
 			if (repo.issues && repo.issues > 0) {
-				statsDiv.appendChild(makeStat('fa-regular fa-circle-check', repo.issues));
+				statsDiv.appendChild(makeStat('fa-regular fa-circle-check text-closed-purple', repo.issues));
 			}
 
 			if (statsDiv.children.length > 0) {
@@ -288,7 +447,7 @@ layout: default
 			{
 				name: 'uncommon-language-framework/runtime',
 				stargazers: '5',
-				description: 'The source code for the ULR (Uncommon Language Runtime) and the ULR Loader, which allows all ULF applications to run.',
+				description: 'The source code for the ULR (Uncommon Language Runtime), ULR Loader, and ULR JIT engine.',
 				commits: 90,
 				prs: 0,
 				issues: 0,
