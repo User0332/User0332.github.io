@@ -80,6 +80,8 @@ layout: default
 		function wrapAnchor(elem) {
 			const anchor = document.createElement('a');
 			anchor.className = 'col-md-6';
+			anchor.target = '_blank';
+			anchor.rel = 'noopener';
 			anchor.href = 'https://github.com/User0332';
 
 			anchor.appendChild(elem);
