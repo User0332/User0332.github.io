@@ -418,76 +418,119 @@ layout: default
 			return col;
 		}
 
-		const repos = [
-			{
-				name: 'User0332/rewards-farmer',
-				stargazers: '914',
-				description: 'Automation for MS Rewards based on https://youtu.be/4qdPcMNaioA',
-				commits: 53,
-				prs: 0,
-				issues: 0,
-				languages: [
-					{ name: 'Python', percent: '98.9%', color: '#3572A5' },
-					{ name: 'Dockerfile', percent: '1.1%', color: '#384D54' },
-				]
-			},
-			{
-				name: 'dotnet/BenchmarkDotNet',
-				stargazers: '11.5k',
-				description: 'Powerful .NET library for benchmarking.',
-				commits: 0,
-				prs: 5,
-				issues: 4,
-				languages: [
-					{ name: 'C#', percent: '97.6%', color: '#178600' },
-					{ name: 'Shell', percent: '1.5%', color: '#89e051' },
-					{ name: 'Other', percent: '0.9%', color: '#ededed' }
-				]
-			},
-			{
-				name: "User0332/regisbooks",
-				stargazers: '1',
-				description: 'The Regis Book Exchange!',
-				commits: 308,
-				prs: 0,
-				issues: 79,
-				languages: [
-					{ name: "HTML", percent: "36.3%", color: "#e34c26" },
-					{ name: "JavaScript", percent: "32.8%", color: "#f1e05a" },
-					{ name: "Python", percent: "28.3%", color: "#3572A5" },
-					{ name: "Other", percent: "2.6%", color: "#ededed" },
-				]
-			},
-			{
-				name: 'uncommon-language-framework/runtime',
-				stargazers: '6',
-				description: 'The source code for the ULR (Uncommon Language Runtime), ULR Loader, and ULR JIT engine.',
-				commits: 90,
-				prs: 0,
-				issues: 0,
-				languages: [
-					{ name: 'C++', percent: '94.4%', color: '#f34b7d' },
-					{ name: 'PowerShell', percent: '4%', color: '#3572A5' },
-					{ name: 'C#', percent: '1.6%', color: '#178600' },
-				]
-			},
-		];
+		async function iterateAndAggregate(url, convertToInt) {
+			const resp = await fetch(url);
 
-		const featuredRepos = document.getElementById('featured-repos');
-
-		for (let i = 0; i < repos.length; i += 2) {
-			const row = document.createElement('div');
-			row.className = 'row my-2';
-
-			row.appendChild(createRepoCard(repos[i]));
-
-			if (i + 1 < repos.length) {
-				row.appendChild(createRepoCard(repos[i + 1]));
+			if (!resp.ok) {
+				console.error(`Error fetching data from ${url}:`, resp.statusText);
+				return 0;
 			}
 
-			featuredRepos.appendChild(row);
+			const linkHeader = resp.headers.get('Link');
+
+			const match = linkHeader?.match(/<([^>]+)>;\s*rel="next"/);
+
+			let total = convertToInt(await resp.json());
+
+			if (match) {
+				total += iterateAndAggregate(match[1], convertToInt);
+			}
+
+			return total;
 		}
 
+		async function getMergedPRs(repoName) {
+			return iterateAndAggregate(`https://api.github.com/search/issues?q=repo:${repoName}+type:pr+is:merged+author:User0332&per_page=100`, data => data.items.length);
+		}
+
+		async function getClosedIssues(repoName) {
+			return iterateAndAggregate(`https://api.github.com/search/issues?q=repo:${repoName}+type:issue+is:closed&per_page=100`, data => {
+				return data.items.filter(issue => issue.closed_by && issue.closed_by.login == "User0332").length;
+			});
+		}
+
+		async function getAuthoredCommits(repoName) {
+			return iterateAndAggregate(`https://api.github.com/repos/${repoName}/commits?author=User0332&per_page=100`, data => data.length);
+		}
+
+		async function getRepoLanguages(repoName, githubLanguageColors) {
+			const resp = await fetch(`https://api.github.com/repos/${repoName}/languages`);
+
+			if (!resp.ok) {
+				console.error(`Error fetching languages for ${repoName}:`, resp.statusText);
+				return [];
+			}
+
+			const data = await resp.json();
+
+			const totalBytes = Object.values(data).reduce((sum, bytes) => sum + bytes, 0);
+
+			return Object.entries(data).sort((a, b) => b[1] - a[1]).map(([language, bytes]) => {
+				const percent = ((bytes / totalBytes) * 100).toFixed(1) + '%';
+				const color = githubLanguageColors[language]?.color || '#ededed';
+				return { name: language, percent, color };
+			}).splice(0, 3); // get top three languages only
+		}
+
+		// TODO: replace this with an occasional Actions workflow to avoid rate limiting
+		async function getRepoDetails(repoName, githubLanguageColors) {
+			const resp = await fetch(`https://api.github.com/repos/${repoName}`);
+
+			if (!resp.ok) {
+				console.error(`Error fetching details for ${repoName}:`, resp.statusText);
+				return null;
+			}
+
+			const data = await resp.json();
+
+			const commits = await getAuthoredCommits(repoName);
+			const prs = await getMergedPRs(repoName);
+			const issues = await getClosedIssues(repoName);
+
+			return {
+				name: repoName,
+				stargazers: data.stargazers_count.toLocaleString(),
+				description: data.description,
+				commits,
+				prs,
+				issues,
+				languages: await getRepoLanguages(repoName, githubLanguageColors)
+			};
+		}
+
+		const featuredRepoNames = [
+			'User0332/rewards-farmer',
+			'dotnet/BenchmarkDotNet',
+			'User0332/regisbooks',
+			'uncommon-language-framework/runtime'
+		];
+
+		async function populateFeaturedRepoDetails(repoNames, githubLanguageColors) {
+			const repos = await Promise.all(featuredRepoNames.map((repoName) => getRepoDetails(repoName, githubLanguageColors)));
+
+			const featuredRepos = document.getElementById('featured-repos');
+
+			for (let i = 0; i < repos.length; i += 2) {
+				const row = document.createElement('div');
+				row.className = 'row my-2';
+
+				row.appendChild(createRepoCard(repos[i]));
+
+				if (i + 1 < repos.length) {
+					row.appendChild(createRepoCard(repos[i + 1]));
+				}
+
+				featuredRepos.appendChild(row);
+			}
+		}
+
+		fetch('https://raw.githubusercontent.com/ozh/github-colors/master/colors.json')
+			.then(response => response.json())
+			.then(colorData => populateFeaturedRepoDetails(featuredRepoNames, colorData))
+			.catch(error => {
+				console.error('Error fetching GitHub language colors:', error);
+				return {};
+			});
 	</script>
 </div>
 
